@@ -1,4 +1,4 @@
-# Project: dbt hands-on - Airbnb Project**
+# Project: dbt hands-on - Airbnb Project
 
 **Overview:**
 The course aims to provide a comprehensive understanding of dbt (Data Build Tool) through a hands-on real-world project focused on Airbnb data. The course is structured into theoretical and practical sections, covering fundamental concepts, development environment setup, and in-depth exploration of dbt features.
@@ -41,7 +41,7 @@ The course aims to provide a comprehensive understanding of dbt (Data Build Tool
    - Setup of Virtual Environments
    - IDE dbt Extension Installation
 
-**2. 🪟 WINDOWS Development Environment Setup:**
+**2. 💻 WINDOWS Development Environment Setup:**
    - Tools installation for Windows
    - Virtual Environment setup on Windows
    - IDE dbt Extension Installation for Windows
