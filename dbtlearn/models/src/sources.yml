@@ -5,7 +5,7 @@ sources:
     schema: raw
     tables:
       - name: listings
-        identifier: raw_listings
+        identifier: raw_listings 
 
       - name: hosts
         identifier: raw_hosts
