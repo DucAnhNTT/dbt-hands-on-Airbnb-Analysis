@@ -106,7 +106,7 @@ The course aims to provide a comprehensive understanding of dbt (Data Build Tool
 
 ---
 
-## Course Conclusion:
+### Course Conclusion:
 
 By the end of the course, participants will have gained both theoretical knowledge and practical expertise in dbt. The course continuously updates to align with the latest dbt releases, ensuring participants are always up-to-date with industry standards.
 
