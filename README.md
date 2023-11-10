@@ -5,7 +5,7 @@ The course aims to provide a comprehensive understanding of dbt (Data Build Tool
 
 ---
 
-### Theoretical Section:
+## Theoretical Section:
 
 **1. 🏗️ Data Foundations:**
    - Data-Maturity Model
@@ -32,9 +32,9 @@ The course aims to provide a comprehensive understanding of dbt (Data Build Tool
 
 ---
 
-### Practical Section:
+## Practical Section:
 
-#### Development Environment Setup:
+### Development Environment Setup:
 
 **1. 🍏 MAC Development Environment Setup:**
    - Installation of necessary tools
@@ -50,7 +50,7 @@ The course aims to provide a comprehensive understanding of dbt (Data Build Tool
    - Connecting to Snowflake
    - Configuring dbt profile for Snowflake
 
-#### Airbnb Project:
+### Airbnb Project:
 
 **1. 🛠️ dbt Models:**
    - Creating dbt Models for Airbnb data
@@ -90,7 +90,7 @@ The course aims to provide a comprehensive understanding of dbt (Data Build Tool
     - Implementing advanced testing using dbt-expectations framework
     - Debugging tests in dbt
 
-#### Advanced Topics and Best Practices:
+### Advanced Topics and Best Practices:
 
 **1. 🌟 Best Practices:**
    - Tips & tricks for efficient dbt development
@@ -106,7 +106,7 @@ The course aims to provide a comprehensive understanding of dbt (Data Build Tool
 
 ---
 
-### Course Conclusion:
+## Course Conclusion:
 
 By the end of the course, participants will have gained both theoretical knowledge and practical expertise in dbt. The course continuously updates to align with the latest dbt releases, ensuring participants are always up-to-date with industry standards.
 
