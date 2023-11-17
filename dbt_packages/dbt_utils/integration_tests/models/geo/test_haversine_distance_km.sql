@@ -13,7 +13,7 @@ final as (
                     lon2='lon_2',
                     unit='km'
                     )
-            }} as {{ type_numeric() }}
+            }} as {{ dbt_utils.type_numeric() }}
         ) as actual
     from data
 )

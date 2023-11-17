@@ -1,22 +1,15 @@
 
-{#
-This keeps succeeding locally and failing in CI. Disabling it to get everything else out, but it should still be tested.
-https://github.com/dbt-labs/dbt-utils/issues/788
-#}
-
-{{ config(enabled = false)}}
-
 {% set column_values = dbt_utils.get_column_values(ref('data_get_column_values_dropped'), 'field', default=['y', 'z'], order_by="field") %}
 
 with expected as (
-    select {{ safe_cast("'y'", type_string()) }} as expected_column_value union all
-    select {{ safe_cast("'z'", type_string()) }} as expected_column_value
+    select {{ dbt_utils.safe_cast("'y'", dbt_utils.type_string()) }} as expected_column_value union all
+    select {{ dbt_utils.safe_cast("'z'", dbt_utils.type_string()) }} as expected_column_value
 ),
 
 actual as (
      
         {% for val in column_values %}
-            select {{ safe_cast("'" ~ val ~ "'", type_string()) }} as actual_column_value
+            select {{ dbt_utils.safe_cast("'" ~ val ~ "'", dbt_utils.type_string()) }} as actual_column_value
             {% if not loop.last %}
                 union all
             {% endif %}

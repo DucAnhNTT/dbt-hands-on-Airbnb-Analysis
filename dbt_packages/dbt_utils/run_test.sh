@@ -1,18 +1,31 @@
 #!/bin/bash
+VENV="venv/bin/activate"
 
-# Show location of local install of dbt
-echo $(which dbt)
+if [[ ! -f $VENV ]]; then
+    python3 -m venv venv
+    . $VENV
 
-# Show version and installed adapters
-dbt --version
+    pip install --upgrade pip setuptools
+    pip install --pre "dbt-$1"
+fi
 
-# Set the profile
+. $VENV
 cd integration_tests
-cp ci/sample.profiles.yml profiles.yml
-export DBT_PROFILES_DIR=.
 
-# Show the location of the profiles directory and test the connection
-dbt debug --target $1
+if [[ ! -e ~/.dbt/profiles.yml ]]; then
+    mkdir -p ~/.dbt
+    cp ci/sample.profiles.yml ~/.dbt/profiles.yml
+fi
 
-dbt deps --target $1 || exit 1
-dbt build --target $1 --full-refresh || exit 1
+_models=""
+_seeds="--full-refresh"
+if [[ ! -z $2 ]]; then _models="--models $2"; fi
+if [[ ! -z $3 ]]; then _seeds="--select $3 --full-refresh"; fi
+
+dbt deps --target $1
+dbt seed --target $1 $_seeds
+if [ $1 == 'redshift' ]; then
+    dbt run -x -m test_insert_by_period --full-refresh --target redshift
+fi
+dbt run -x --target $1 $_models
+dbt test -x --target $1 $_models

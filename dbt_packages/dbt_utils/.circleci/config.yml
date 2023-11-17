@@ -5,83 +5,60 @@ jobs:
   
   integration-postgres:
     docker:
-      - image: cimg/python:3.9
-      - image: cimg/postgres:9.6
-        environment:
-          POSTGRES_USER: root
-    environment:
-      POSTGRES_TEST_HOST: localhost
-      POSTGRES_TEST_USER: root
-      POSTGRES_TEST_PASS: ''
-      POSTGRES_TEST_PORT: 5432
-      POSTGRES_TEST_DBNAME: circle_test
+      - image: cimg/python:3.9.9
+      - image: circleci/postgres:9.6.5-alpine-ram
 
     steps:
       - checkout
-      - run: pip install --pre dbt-postgres -r dev-requirements.txt
       - run:
-          name: "Run OG Tests - Postgres"
+          name: "Run Tests - Postgres"
+          environment:
+            POSTGRES_TEST_HOST: localhost
+            POSTGRES_TEST_USER: root
+            POSTGRES_TEST_PASS: ''
+            POSTGRES_TEST_PORT: 5432
+            POSTGRES_TEST_DBNAME: circle_test
           command: ./run_test.sh postgres
       - store_artifacts:
-          path: integration_tests/logs
-      - store_artifacts:
-          path: integration_tests/target
-
-    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass    
-    resource_class: large
+          path: ./logs
 
   integration-redshift:
     docker:
-      - image: cimg/python:3.9
+      - image: cimg/python:3.9.9
     steps:
       - checkout
-      - run: pip install --pre dbt-redshift -r dev-requirements.txt
       - run:
-          name: "Run OG Tests - Redshift"
+          name: "Run Tests - Redshift"
           command: ./run_test.sh redshift
       - store_artifacts:
-          path: integration_tests/logs
-      - store_artifacts:
-          path: integration_tests/target
-    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass    
-    resource_class: large
+          path: ./logs
 
   integration-snowflake:
     docker:
-      - image: cimg/python:3.9
+      - image: cimg/python:3.9.9
     steps:
       - checkout
-      - run: pip install --pre dbt-snowflake -r dev-requirements.txt
       - run:
-          name: "Run OG Tests - Snowflake"
+          name: "Run Tests - Snowflake"
           command: ./run_test.sh snowflake
       - store_artifacts:
-          path: integration_tests/logs          
-      - store_artifacts:
-          path: integration_tests/target
-    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass    
-    resource_class: large
-
+          path: ./logs          
+  
   integration-bigquery:
     environment:
       BIGQUERY_SERVICE_KEY_PATH: "/home/circleci/bigquery-service-key.json"
     docker:
-      - image: cimg/python:3.9
+      - image: cimg/python:3.9.9
     steps:
       - checkout
-      - run: pip install --pre dbt-bigquery -r dev-requirements.txt
       - run:
           name: "Set up credentials"
           command: echo $BIGQUERY_SERVICE_ACCOUNT_JSON > ${HOME}/bigquery-service-key.json
       - run:
-          name: "Run OG Tests - BigQuery"
+          name: "Run Tests - BigQuery"
           command: ./run_test.sh bigquery
       - store_artifacts:
-          path: integration_tests/logs
-      - store_artifacts:
-          path: integration_tests/target
-    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass    
-    resource_class: large
+          path: ./logs
 
 workflows:
   version: 2
@@ -89,14 +66,11 @@ workflows:
     jobs:
       - integration-postgres
       - integration-redshift:
-          context: profile-redshift
           requires:
             - integration-postgres
       - integration-snowflake:
-          context: profile-snowflake
           requires:
             - integration-postgres
       - integration-bigquery:
-          context: profile-bigquery
           requires:
             - integration-postgres

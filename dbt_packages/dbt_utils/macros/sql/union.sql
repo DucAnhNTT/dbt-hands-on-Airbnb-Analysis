@@ -1,8 +1,8 @@
-{%- macro union_relations(relations, column_override=none, include=[], exclude=[], source_column_name='_dbt_source_relation', where=none) -%}
-    {{ return(adapter.dispatch('union_relations', 'dbt_utils')(relations, column_override, include, exclude, source_column_name, where)) }}
+{%- macro union_relations(relations, column_override=none, include=[], exclude=[], source_column_name='_dbt_source_relation') -%}
+    {{ return(adapter.dispatch('union_relations', 'dbt_utils')(relations, column_override, include, exclude, source_column_name)) }}
 {% endmacro %}
 
-{%- macro default__union_relations(relations, column_override=none, include=[], exclude=[], source_column_name='_dbt_source_relation', where=none) -%}
+{%- macro default__union_relations(relations, column_override=none, include=[], exclude=[], source_column_name='_dbt_source_relation') -%}
 
     {%- if exclude and include -%}
         {{ exceptions.raise_compiler_error("Both an exclude and include list were provided to the `union` macro. Only one is allowed") }}
@@ -17,20 +17,6 @@
 
     {%- set relation_columns = {} -%}
     {%- set column_superset = {} -%}
-    {%- set all_excludes = [] -%}
-    {%- set all_includes = [] -%}
-
-    {%- if exclude -%}
-        {%- for exc in exclude -%}
-            {%- do all_excludes.append(exc | lower) -%}
-        {%- endfor -%}
-    {%- endif -%}
-
-    {%- if include -%}
-        {%- for inc in include -%}
-            {%- do all_includes.append(inc | lower) -%}
-        {%- endfor -%}
-    {%- endif -%}
 
     {%- for relation in relations -%}
 
@@ -42,10 +28,10 @@
         {%- for col in cols -%}
 
         {#- If an exclude list was provided and the column is in the list, do nothing -#}
-        {%- if exclude and col.column | lower in all_excludes -%}
+        {%- if exclude and col.column in exclude -%}
 
         {#- If an include list was provided and the column is not in the list, do nothing -#}
-        {%- elif include and col.column | lower not in all_includes -%}
+        {%- elif include and col.column not in include -%}
 
         {#- Otherwise add the column to the column superset -#}
         {%- else -%}
@@ -74,35 +60,13 @@
     {%- endfor -%}
 
     {%- set ordered_column_names = column_superset.keys() -%}
-    {%- set dbt_command = flags.WHICH -%}
-
-
-    {% if dbt_command in ['run', 'build'] %}
-    {% if (include | length > 0 or exclude | length > 0) and not column_superset.keys() %}
-        {%- set relations_string -%}
-            {%- for relation in relations -%}
-                {{ relation.name }}
-            {%- if not loop.last %}, {% endif -%}
-            {%- endfor -%}
-        {%- endset -%}
-
-        {%- set error_message -%}
-            There were no columns found to union for relations {{ relations_string }}
-        {%- endset -%}
-
-        {{ exceptions.raise_compiler_error(error_message) }}
-    {%- endif -%}
-    {%- endif -%}
 
     {%- for relation in relations %}
 
         (
             select
 
-                {%- if source_column_name is not none %}
-                cast({{ dbt.string_literal(relation) }} as {{ dbt.type_string() }}) as {{ source_column_name }},
-                {%- endif %}
-
+                cast({{ dbt_utils.string_literal(relation) }} as {{ dbt_utils.type_string() }}) as {{ source_column_name }},
                 {% for col_name in ordered_column_names -%}
 
                     {%- set col = column_superset[col_name] %}
@@ -113,10 +77,6 @@
                 {%- endfor %}
 
             from {{ relation }}
-
-            {% if where -%}
-            where {{ where }}
-            {%- endif %}
         )
 
         {% if not loop.last -%}
