@@ -1,4 +1,4 @@
-# Project: dbt hands-on - Airbnb Analysis
+# Project: dbt hands-on - Airbnb Analysis (Will complete Readme ASAP 😍😍🤗🤗)
 
 **Overview:**
 The course aims to provide a comprehensive understanding of dbt (Data Build Tool) through a hands-on real-world project focused on Airbnb data. The course is structured into theoretical and practical sections, covering fundamental concepts, development environment setup, and in-depth exploration of dbt features.
